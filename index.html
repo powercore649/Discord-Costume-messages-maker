@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Discord Webhook Form</title>
+    <link rel="stylesheet" type="text/css" href="webhook.css">
+  </head>
+  <body>
+    <form id="webhook-form">
+      <label for="webhook-input">Discord Webhook:</label>
+      <input type="text" id="webhook-input" name="webhook" required>
+      <br>
+      <label for="message-input">Message:</label>
+      <textarea id="message-input" name="message" rows="4" cols="50" required></textarea>
+      <br>
+      <label for="type-select">Type:</label>
+      <select id="type-select" name="type" required>
+        <option value="text">Text</option>
+        <option value="embed">Embed</option>
+      </select>
+      <br>
+      <label for="title-input">Title:</label>
+      <input type="text" id="title-input" name="title">
+      <br>
+      <label for="color-input">Color:</label>
+      <input type="color" id="color-input" name="color">
+      <br>
+      <input type="submit" value="Send">
+    </form>
+
+    <script>
+      document.getElementById('webhook-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var webhook = document.getElementById('webhook-input').value;
+        var message = document.getElementById('message-input').value;
+        var type = document.getElementById('type-select').value;
+        var title = document.getElementById('title-input').value;
+        var color = document.getElementById('color-input').value;
+
+        if (type === 'text') {
+          var payload = { content: message };
+        } else {
+          var embed = {
+            "title": title,
+            "color": parseInt(color.substr(1), 16),
+            "description": message
+          };
+          var payload = { embeds: [embed] };
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', webhook);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(payload));
+
+        // Clear the form
+        document.getElementById('webhook-input').value = '';
+        document.getElementById('message-input').value = '';
+        document.getElementById('type-select').value = 'text';
+        document.getElementById('title-input').value = '';
+        document.getElementById('color-input').value = '#4CAF50';
+      });
+    </script>
+  </body>
+</html>
